@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance = null;
 
     private int points = 0;
-    private int numItems = 1;
+    public int numItems = 1;
     private int numItemsCollected = 0;
     private bool stopMovement = false;
     private int highScore;
