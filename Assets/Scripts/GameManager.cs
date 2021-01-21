@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
             textScore.text = str;
             textScore.gameObject.SetActive(true);
             textWin.gameObject.SetActive(true);
-            //SceneManager.LoadScene(SceneManager.GetSceneAt(0).name);
+          
         }
         
             if (points > highScore)
