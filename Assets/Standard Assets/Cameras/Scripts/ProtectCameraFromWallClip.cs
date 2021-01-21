@@ -55,7 +55,7 @@ namespace UnityStandardAssets.Cameras
             for (int i = 0; i < cols.Length; i++)
             {
                 if ((!cols[i].isTrigger) &&
-                    !(cols[i].attachedRigidbody != null && cols[i].attachedRigidbody.CompareTag(dontClipTag)))
+                    !(cols[i].attachedRigidbody != null ))
                 {
                     initialIntersect = true;
                     break;
@@ -87,8 +87,7 @@ namespace UnityStandardAssets.Cameras
             {
                 // only deal with the collision if it was closer than the previous one, not a trigger, and not attached to a rigidbody tagged with the dontClipTag
                 if (m_Hits[i].distance < nearest && (!m_Hits[i].collider.isTrigger) &&
-                    !(m_Hits[i].collider.attachedRigidbody != null &&
-                      m_Hits[i].collider.attachedRigidbody.CompareTag(dontClipTag)))
+                    !(m_Hits[i].collider.attachedRigidbody != null ))
                 {
                     // change the nearest collision to latest
                     nearest = m_Hits[i].distance;
