@@ -35,8 +35,7 @@ namespace UnityStandardAssets.Cameras
                 yaw=speedH*Input.GetAxis("Mouse X");
                 pitch =speedV*Input.GetAxis("Mouse Y");
                 transform.Rotate(pitch, yaw, 0f);
-                return;
-
+               
             }
                 // if no target, or no time passed then we quit early, as there is nothing to do
                 if (!(deltaTime > 0) || m_Target == null)

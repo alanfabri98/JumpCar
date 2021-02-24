@@ -10,8 +10,6 @@ public class GameManager : MonoBehaviour
 { 
     public static GameManager instance = null;
 
-   
-
     private int points = 0;
     public int numItems = 1;
     private int numItemsCollected = 0;
@@ -22,6 +20,7 @@ public class GameManager : MonoBehaviour
     public AudioSource soundCoin;
     public Text textScore;
     public Text textWin;
+    private GameState gameState;
     void Awake()
     {
 
@@ -30,6 +29,7 @@ public class GameManager : MonoBehaviour
         }else if(instance != null){
             Destroy(gameObject);
         }
+        
        
     }
     public bool StopMovement{
@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
         textScore.gameObject.SetActive(false);
         textWin.gameObject.SetActive(false);
         highScore = PlayerPrefs.GetInt("Score",0);
+        gameState = new GameState(0,life,numItems,points);
     }
 
     // Update is called once per frame
@@ -50,8 +51,9 @@ public class GameManager : MonoBehaviour
     }
     public bool PickItem() {
         soundItem.Play();
-        points += 10;
-        numItemsCollected += 1;
+        gameState.points += 10;
+
+        gameState.numItemsCollected += 1;
         textScore.gameObject.SetActive(true);
         textScore.text = "+ " + 10;
         ActivationTextScoreRoutine();
@@ -59,7 +61,7 @@ public class GameManager : MonoBehaviour
         return true;
     }
     public void PickCoin(){
-        points += 2;
+        gameState.points += 2;
         soundCoin.Play();
         textScore.gameObject.SetActive(true);
         textScore.text = "+ " + 2;
@@ -68,7 +70,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void PickBarrel(){
-        points += 5;
+        gameState.points += 5;
         soundCoin.Play();
         textScore.gameObject.SetActive(true);
         textScore.text = "+ " + 5;
@@ -77,11 +79,11 @@ public class GameManager : MonoBehaviour
     }
     public void loseLife()
     {
-        life--;
+        gameState.lifes--;
         print("life"+life);
     }
     public void LevelCompleted() { 
-        if (numItemsCollected == numItems)
+        if (gameState.numItemsCollected == gameState.numItems)
         {
 
             string str = "";
@@ -99,7 +101,7 @@ public class GameManager : MonoBehaviour
         
             if (points > highScore)
             {
-                PlayerPrefs.SetInt("Score", points);
+                PlayerPrefs.SetInt("Score", gameState.points);
             }
         
         
