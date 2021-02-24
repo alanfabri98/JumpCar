@@ -42,6 +42,7 @@ namespace UnityStandardAssets.Vehicles.Car
         private Vector3 m_Prevpos, m_Pos;
         private float m_SteerAngle;
         private int m_GearNum;
+        public float steer = 0;
         private float m_GearFactor;
         private float m_OldRotation;
         private float m_CurrentTorque;
@@ -54,7 +55,7 @@ namespace UnityStandardAssets.Vehicles.Car
         public float MaxSpeed{get { return m_Topspeed; }}
         public float Revs { get; private set; }
         public float AccelInput { get; private set; }
-
+        public ParticleSystem turbo;
         // Use this for initialization
         private void Start()
         {
@@ -132,8 +133,15 @@ namespace UnityStandardAssets.Vehicles.Car
 
         public void Move(float steering, float accel, float footbrake, float handbrake)
         {
-           
-            
+
+            if (accel > 0)
+            {
+                turbo.Emit(1);
+            }
+            else
+            {
+                turbo.Stop();
+            }
             for (int i = 0; i < 4; i++)
             {
                 Quaternion quat;
@@ -148,7 +156,7 @@ namespace UnityStandardAssets.Vehicles.Car
             }
 
             //clamp input values
-            steering = Mathf.Clamp(steering, -1, 1);
+            steer = Mathf.Clamp(steering, -1, 1);
             AccelInput = accel = Mathf.Clamp(accel, 0, 1);
             BrakeInput = footbrake = -1*Mathf.Clamp(footbrake, -1, 0);
             handbrake = Mathf.Clamp(handbrake, 0, 1);
@@ -211,6 +219,7 @@ namespace UnityStandardAssets.Vehicles.Car
             {
                 case CarDriveType.FourWheelDrive:
                     thrustTorque = accel * (m_CurrentTorque / 4f);
+                    print("thrustTorque" + thrustTorque);
                     for (int i = 0; i < 4; i++)
                     {
                         m_WheelColliders[i].motorTorque = thrustTorque;
@@ -280,22 +289,25 @@ namespace UnityStandardAssets.Vehicles.Car
         // these effects are controlled through the WheelEffects class
         private void CheckForWheelSpin()
         {
+            
             // loop through all wheels
             for (int i = 0; i < 4; i++)
             {
+
                 WheelHit wheelHit;
                 m_WheelColliders[i].GetGroundHit(out wheelHit);
 
                 // is the tire slipping above the given threshhold
                 if (Mathf.Abs(wheelHit.forwardSlip) >= m_SlipLimit || Mathf.Abs(wheelHit.sidewaysSlip) >= m_SlipLimit)
                 {
-                    m_WheelEffects[i].EmitTyreSmoke();
 
+                    m_WheelEffects[i].EmitTyreSmoke();
                     // avoiding all four tires screeching at the same time
                     // if they do it can lead to some strange audio artefacts
                     if (!AnySkidSoundPlaying())
                     {
                         m_WheelEffects[i].PlayAudio();
+
                     }
                     continue;
                 }

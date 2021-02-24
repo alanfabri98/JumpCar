@@ -8,6 +8,8 @@ TagManager:
   - coin
   - item
   - TargetCam
+  - bullet
+  - Barrel
   layers:
   - Default
   - TransparentFX
