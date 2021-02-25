@@ -162,8 +162,8 @@ namespace UnityStandardAssets.Vehicles.Car
 
                 //clamp input values
                 steer = Mathf.Clamp(steering, -1, 1);
-                AccelInput = accel = Mathf.Clamp(accel, 0, 1);
-                BrakeInput = footbrake = -1 * Mathf.Clamp(footbrake, -1, 0);
+                AccelInput = Mathf.Clamp(accel, 0, 1);
+                BrakeInput = footbrake ;
                 handbrake = Mathf.Clamp(handbrake, 0, 1);
 
                 //Set the steer on the front wheels.
@@ -224,7 +224,11 @@ namespace UnityStandardAssets.Vehicles.Car
                 CarAudio carAudio = GetComponent<CarAudio>();
                 carAudio.StopAll();
                 hasExploded = true;
-               var dam =  Instantiate(explosion, transform.position, transform.rotation);
+                m_WheelColliders[0].brakeTorque = 0f;
+                m_WheelColliders[1].brakeTorque = 0f;
+                m_WheelColliders[2].brakeTorque = 0f;
+                m_WheelColliders[3].brakeTorque = 0f;
+                var dam =  Instantiate(explosion, transform.position, transform.rotation);
                 Destroy(dam,1);
                 
                
@@ -278,19 +282,22 @@ namespace UnityStandardAssets.Vehicles.Car
                     break;
 
             }
+            
+                for (int i = 0; i < 4; i++)
+                {
 
-            for (int i = 0; i < 4; i++)
-            {
-                if (CurrentSpeed > 5 && Vector3.Angle(transform.forward, m_Rigidbody.velocity) < 50f)
-                {
-                    m_WheelColliders[i].brakeTorque = m_BrakeTorque*footbrake;
+                   
+                    if (footbrake > 0)
+                    {
+                        m_WheelColliders[i].brakeTorque = m_BrakeTorque * footbrake;
+                    }
+                    else
+                    {
+                        m_WheelColliders[i].brakeTorque = 0;
+                    }
                 }
-                else if (footbrake > 0)
-                {
-                    m_WheelColliders[i].brakeTorque = 0f;
-                    m_WheelColliders[i].motorTorque = -m_ReverseTorque*footbrake;
-                }
-            }
+            
+            
         }
 
 

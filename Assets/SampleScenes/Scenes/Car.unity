@@ -7734,15 +7734,15 @@ MonoBehaviour:
   m_MaximumSteerAngle: 35
   m_SteerHelper: 0.705
   m_TractionControl: 1
-  m_FullTorqueOverAllWheels: 7000
-  m_ReverseTorque: 3000
+  m_FullTorqueOverAllWheels: 5000
+  m_ReverseTorque: 2500
   m_MaxHandbrakeTorque: 100000000
   m_Downforce: 400
   m_SpeedType: 0
   m_Topspeed: 100
   m_RevRangeBoundary: 0.7
   m_SlipLimit: 0.3
-  m_BrakeTorque: 20000
+  m_BrakeTorque: 2000
   steer: 0
   turbo: {fileID: 613740029}
   smoke: {fileID: 114084422}
