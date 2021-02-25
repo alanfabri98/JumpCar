@@ -224,10 +224,10 @@ namespace UnityStandardAssets.Vehicles.Car
                 CarAudio carAudio = GetComponent<CarAudio>();
                 carAudio.StopAll();
                 hasExploded = true;
-                m_WheelColliders[0].brakeTorque = 0f;
-                m_WheelColliders[1].brakeTorque = 0f;
-                m_WheelColliders[2].brakeTorque = 0f;
-                m_WheelColliders[3].brakeTorque = 0f;
+                m_WheelColliders[0].brakeTorque = 10000f;
+                m_WheelColliders[1].brakeTorque = 10000f;
+                m_WheelColliders[2].brakeTorque = 10000f;
+                m_WheelColliders[3].brakeTorque = 10000f;
                 var dam =  Instantiate(explosion, transform.position, transform.rotation);
                 Destroy(dam,1);
                 
