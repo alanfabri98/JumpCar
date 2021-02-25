@@ -56,6 +56,9 @@ namespace UnityStandardAssets.Vehicles.Car
         public float Revs { get; private set; }
         public float AccelInput { get; private set; }
         public ParticleSystem turbo;
+        public ParticleSystem smoke;
+        public GameObject explosion;
+        private bool hasExploded = false;
         // Use this for initialization
         private void Start()
         {
@@ -74,6 +77,7 @@ namespace UnityStandardAssets.Vehicles.Car
 
             m_Rigidbody = GetComponent<Rigidbody>();
             m_CurrentTorque = m_FullTorqueOverAllWheels - (m_TractionControl*m_FullTorqueOverAllWheels);
+            smoke.Stop();
         }
 
 
@@ -133,63 +137,100 @@ namespace UnityStandardAssets.Vehicles.Car
 
         public void Move(float steering, float accel, float footbrake, float handbrake)
         {
-
-            if (accel > 0)
+            if (!hasExploded)
             {
-                turbo.Emit(1);
+                if (accel > 0)
+                {
+                    turbo.Emit(1);
+                }
+                else
+                {
+                    turbo.Stop();
+                }
+                for (int i = 0; i < 4; i++)
+                {
+                    Quaternion quat;
+                    Vector3 position;
+                    m_WheelColliders[i].GetWorldPose(out position, out quat);
+
+                    m_WheelMeshes[i].transform.position = position;
+                    //m_WheelMeshes[i].transform.position = new Vector3(position.x + (i % 2 == 0?-0.55f:0.55f), position.y,position.z);
+
+
+                    m_WheelMeshes[i].transform.rotation = quat;
+                }
+
+                //clamp input values
+                steer = Mathf.Clamp(steering, -1, 1);
+                AccelInput = accel = Mathf.Clamp(accel, 0, 1);
+                BrakeInput = footbrake = -1 * Mathf.Clamp(footbrake, -1, 0);
+                handbrake = Mathf.Clamp(handbrake, 0, 1);
+
+                //Set the steer on the front wheels.
+                //Assuming that wheels 0 and 1 are the front wheels.
+                m_SteerAngle = steering * m_MaximumSteerAngle;
+                m_WheelColliders[0].steerAngle = m_SteerAngle;
+                m_WheelColliders[1].steerAngle = m_SteerAngle;
+
+                SteerHelper();
+                ApplyDrive(accel, footbrake);
+                CapSpeed();
+
+                //Set the handbrake.
+                //Assuming that wheels 2 and 3 are the rear wheels.
+                if (handbrake > 0f)
+                {
+                    var hbTorque = handbrake * m_MaxHandbrakeTorque;
+                    m_WheelColliders[2].brakeTorque = hbTorque;
+                    m_WheelColliders[3].brakeTorque = hbTorque;
+                }
+
+
+                CalculateRevs();
+                GearChanging();
+
+                AddDownForce();
+                CheckForWheelSpin();
+                TractionControl();
+                UpdateSmoke();
             }
-            else
-            {
-                turbo.Stop();
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                Quaternion quat;
-                Vector3 position;
-                m_WheelColliders[i].GetWorldPose(out position, out quat);
-
-                m_WheelMeshes[i].transform.position =position;
-                //m_WheelMeshes[i].transform.position = new Vector3(position.x + (i % 2 == 0?-0.55f:0.55f), position.y,position.z);
-
-
-                m_WheelMeshes[i].transform.rotation = quat;
-            }
-
-            //clamp input values
-            steer = Mathf.Clamp(steering, -1, 1);
-            AccelInput = accel = Mathf.Clamp(accel, 0, 1);
-            BrakeInput = footbrake = -1*Mathf.Clamp(footbrake, -1, 0);
-            handbrake = Mathf.Clamp(handbrake, 0, 1);
-
-            //Set the steer on the front wheels.
-            //Assuming that wheels 0 and 1 are the front wheels.
-            m_SteerAngle = steering*m_MaximumSteerAngle;
-            m_WheelColliders[0].steerAngle = m_SteerAngle;
-            m_WheelColliders[1].steerAngle = m_SteerAngle;
-
-            SteerHelper();
-            ApplyDrive(accel, footbrake);
-            CapSpeed();
-
-            //Set the handbrake.
-            //Assuming that wheels 2 and 3 are the rear wheels.
-            if (handbrake > 0f)
-            {
-                var hbTorque = handbrake*m_MaxHandbrakeTorque;
-                m_WheelColliders[2].brakeTorque = hbTorque;
-                m_WheelColliders[3].brakeTorque = hbTorque;
-            }
-
-
-            CalculateRevs();
-            GearChanging();
-
-            AddDownForce();
-            CheckForWheelSpin();
-            TractionControl();
+            
+            
         }
 
+        private void UpdateSmoke()
+        {
+           float damage = GameManager.instance.getGameState().GetDamagePercent();
+          
+            if (damage > 0.25)
+            {
+               
+                smoke.Emit(1);
+            }
+            else if(damage > 0.5)
+            {
+                smoke.Emit(2);
+            }
+            else if (damage > 0.7)
+            {
+                smoke.Emit(3);
+            }
+            else if (damage > 0.8)
+            {
+                smoke.Emit(10);
+            }
+             if (damage == 1 && !hasExploded)
+            {
+                CarAudio carAudio = GetComponent<CarAudio>();
+                carAudio.StopAll();
+                hasExploded = true;
+               var dam =  Instantiate(explosion, transform.position, transform.rotation);
+                Destroy(dam,1);
+                
+               
+            }
 
+        }
         private void CapSpeed()
         {
             float speed = m_Rigidbody.velocity.magnitude;
@@ -219,7 +260,7 @@ namespace UnityStandardAssets.Vehicles.Car
             {
                 case CarDriveType.FourWheelDrive:
                     thrustTorque = accel * (m_CurrentTorque / 4f);
-                    print("thrustTorque" + thrustTorque);
+               
                     for (int i = 0; i < 4; i++)
                     {
                         m_WheelColliders[i].motorTorque = thrustTorque;

@@ -12,14 +12,15 @@ public class GameManager : MonoBehaviour
 
     private int points = 0;
     public int numItems = 1;
-    private int numItemsCollected = 0;
-    int life = 4;
+
+    public int life = 4;
     private bool stopMovement = false;
     private int highScore;
     public AudioSource soundItem;
     public AudioSource soundCoin;
     public Text textScore;
     public Text textWin;
+    public Text textItems;
     private GameState gameState;
     void Awake()
     {
@@ -32,18 +33,24 @@ public class GameManager : MonoBehaviour
         
        
     }
+    public GameState getGameState()
+    {
+        return gameState;
+    }
     public bool StopMovement{
         get{ return stopMovement;}
     }
     // Start is called before the first frame update
     void Start()
     {
+       
         textScore.gameObject.SetActive(false);
         textWin.gameObject.SetActive(false);
         highScore = PlayerPrefs.GetInt("Score",0);
-        gameState = new GameState(0,life,numItems,points);
+        gameState = new GameState(0,life,life,numItems,points);
+        textItems.text = gameState.numItemsCollected + " / " + gameState.numItems;
     }
-
+    
     // Update is called once per frame
     void Update()
     {
@@ -55,6 +62,7 @@ public class GameManager : MonoBehaviour
 
         gameState.numItemsCollected += 1;
         textScore.gameObject.SetActive(true);
+        textItems.text = gameState.numItemsCollected + " / " + gameState.numItems;
         textScore.text = "+ " + 10;
         ActivationTextScoreRoutine();
         //print("La cantidad de puntos "+points);
@@ -79,8 +87,14 @@ public class GameManager : MonoBehaviour
     }
     public void loseLife()
     {
-        gameState.lifes--;
-        print("life"+life);
+       
+        if (gameState.lifes >0)
+        {
+            gameState.lifes--;
+           
+        }
+        
+
     }
     public void LevelCompleted() { 
         if (gameState.numItemsCollected == gameState.numItems)

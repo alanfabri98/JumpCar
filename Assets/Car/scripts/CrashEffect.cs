@@ -34,7 +34,8 @@ public class CrashEffect : MonoBehaviour
     {
         
         if(other.CompareTag("Untagged")){
-            PlayAudio();   
+            PlayAudio();
+            GameManager.instance.loseLife();
         }
             
     }
