@@ -5,6 +5,12 @@ TagManager:
   serializedVersion: 2
   tags:
   - Shootable
+  - agent
+  - ground
+  - target
+  - item
+  - car
+  - coin
   layers:
   - Default
   - TransparentFX
@@ -17,8 +23,8 @@ TagManager:
   - Lighting
   - Ground
   - Postprocessing
-  - 
-  - 
+  - Ground
+  - Player
   - 
   - 
   - 

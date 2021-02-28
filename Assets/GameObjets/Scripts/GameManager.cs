@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     private int highScore;
     public AudioSource soundItem;
     public AudioSource soundCoin;
+    public AudioSource soundExplosion;
     public Text textScore;
     public Text textWin;
     public Text textItems;
@@ -94,6 +95,18 @@ public class GameManager : MonoBehaviour
            
         }
         
+
+    }
+    public void loseLifeLaser()
+    {
+
+        if (gameState.lifes > 0)
+        {
+            gameState.lifes--;
+
+        }
+        soundExplosion.Play();
+
 
     }
     public void LevelCompleted() { 
