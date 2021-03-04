@@ -8,10 +8,14 @@ public class Coin : MonoBehaviour
     {
         transform.Rotate(Vector3.up, Time.deltaTime * 120 , Space.World);
     }
-    private void OnTriggerEnter(Collider other) {
-
-        GameManager.instance.PickCoin();
-
-        Destroy(gameObject);
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("car"))
+        {
+            GameManager.instance.PickCoin();
+            gameObject.SetActive(false);
+        }
     }
+    
+
 }

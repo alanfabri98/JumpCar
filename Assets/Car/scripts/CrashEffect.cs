@@ -29,15 +29,15 @@ public class CrashEffect : MonoBehaviour
         m_AudioSource.Stop();
         PlayingAudio = false;
     }
-
-     void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        
-        if(other.CompareTag("Untagged")){
-            PlayAudio();   
+        if (collision.collider.CompareTag("Untagged"))
+        {
+            PlayAudio();
+            GameManager.instance.loseLife();
         }
-            
     }
+    
 
 
 }
