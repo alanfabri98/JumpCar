@@ -9,6 +9,14 @@ public class GameManager : MonoBehaviour
 { 
     public static GameManager instance = null;
 
+    //Variables para la vida
+    VidaPlayer playerVida;
+    public int      cantidad;
+    public float    damageTime;
+    float           currentDamageTime;
+    /////
+
+    public Text Puntaje;
     private int points = 0;
     public int numItems = 1;
     private int numItemsCollected = 0;
@@ -36,23 +44,30 @@ public class GameManager : MonoBehaviour
     {
         textScore.gameObject.SetActive(false);
         textWin.gameObject.SetActive(false);
-        highScore = PlayerPrefs.GetInt("Score",0);
+        highScore = PlayerPrefs.GetInt("Score",10);
+
+        ///Vida player
+        playerVida = GameObject.FindWithTag("Player").GetComponent<VidaPlayer>();
+        ///
     }
 
     // Update is called once per frame
     void Update()
     {
         LevelCompleted();   
+
     }
     public bool PickItem() {
         soundItem.Play();
         points += 10;
+        Puntaje.text="Puntaje: "+points.ToString();
         numItemsCollected += 1;
         print("La cantidad de puntos "+points);
         return true;
     }
     public void PickCoin(){
         points += 2;
+        Puntaje.text="Puntaje: "+points.ToString();
         soundCoin.Play();
         print("La cantidad de puntos "+points);
     }
@@ -85,6 +100,13 @@ public class GameManager : MonoBehaviour
 
     }
    
-
+    private void OnCollisionEnter(Collision collision)
+    {
+        currentDamageTime += Time.deltaTime;
+        if(currentDamageTime > damageTime){
+            playerVida.vida += cantidad;
+            currentDamageTime = 0.0f;
+        }        
+    }
 
   }
