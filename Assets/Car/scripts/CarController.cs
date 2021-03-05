@@ -269,11 +269,12 @@ namespace UnityStandardAssets.Vehicles.Car
                     for (int i = 0; i < 4; i++)
                     {
 
+                     
                         if (i % 2 == 0)
                         {
-                            if (steering < -0.25)
-                                thrustTorque = (accel + Math.Abs(steering*0.6f) )* (m_CurrentTorque / 4f);
-                            else
+                            //if (steering < -0.25)
+                            //    thrustTorque = (accel + Math.Abs(steering*0.6f) )* (m_CurrentTorque / 4f);
+                            //else
                             m_WheelColliders[i].motorTorque = thrustTorque;
                         }
                         else
@@ -283,7 +284,8 @@ namespace UnityStandardAssets.Vehicles.Car
                             else
                             m_WheelColliders[i].motorTorque = thrustTorque;
                         }
-                       
+                        m_WheelColliders[i].motorTorque = thrustTorque;
+
                     }
                     break;
 
