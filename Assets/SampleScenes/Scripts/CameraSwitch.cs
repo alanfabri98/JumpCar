@@ -14,13 +14,7 @@ public class CameraSwitch : MonoBehaviour
     {
         text.text = objects[m_CurrentActiveObject].name;
     }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            NextCamera();
-        }
-    }
+
 
     public void NextCamera()
     {

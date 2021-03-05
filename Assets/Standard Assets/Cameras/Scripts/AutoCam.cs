@@ -17,10 +17,7 @@ namespace UnityStandardAssets.Cameras
         [SerializeField] private float m_SpinTurnLimit = 90;// The threshold beyond which the camera stops following the target's rotation. (used in situations where a car spins out, for example)
         [SerializeField] private float m_TargetVelocityLowerLimit = 4f;// the minimum velocity above which the camera turns towards the object's velocity. Below this we use the object's forward direction.
         [SerializeField] private float m_SmoothTurnTime = 0.2f; // the smoothing for the camera's rotation
-        private float pitch = 0f;
-        private float yaw = 0f;
-        private float speedH = 10f;
-        private float speedV = 10f;
+
         private float m_LastFlatAngle; // The relative angle of the target and the rig from the previous frame.
         private float m_CurrentTurnAmount; // How much to turn the camera
         private float m_TurnSpeedVelocityChange; // The change in the turn speed velocity
@@ -29,16 +26,8 @@ namespace UnityStandardAssets.Cameras
 
         protected override void FollowTarget(float deltaTime)
         {
-           
-            if(Input.GetAxis("Mouse X")!=0 || Input.GetAxis("Mouse Y") != 0)
-            {
-                yaw=speedH*Input.GetAxis("Mouse X");
-                pitch =speedV*Input.GetAxis("Mouse Y");
-                transform.Rotate(pitch, yaw, 0f);
-               
-            }
-                // if no target, or no time passed then we quit early, as there is nothing to do
-                if (!(deltaTime > 0) || m_Target == null)
+            // if no target, or no time passed then we quit early, as there is nothing to do
+            if (!(deltaTime > 0) || m_Target == null)
             {
                 return;
             }
